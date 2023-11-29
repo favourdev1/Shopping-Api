@@ -52,11 +52,5 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-      /**
-     * Set the user as an administrator.
-     */
-    // public function setAsAdmin()
-    // {
-    //     $this->update(['is_admin' => true]);
-    // }
+    
 }
