@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+
 
 // Access to Non Logged in Information
 Route::prefix('products')->group(function () {
@@ -18,9 +20,28 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 // Profile
 Route::middleware('auth:api')->group(function () {
-    Route::get('/profile/{user}', [UsersController::class, 'showProfile']);
-    Route::put('/profile/update', [UsersController::class, 'updateProfile']);
+    
+    Route::prefix('profile')->group(function (){
+        Route::get('/{user}', [UsersController::class, 'showProfile']);
+        Route::put('/update', [UsersController::class, 'updateProfile']);
+    });
+
+
+    Route::prefix('carts')->group(function () {
+        Route::get('/{user}', [CartController::class, 'index']);
+        Route::post('/add/{user}', [CartController::class, 'store']);
+        // Route::put('/update/{cart}', [CartController::class, 'update']);
+        Route::delete('/delete/{cart}', [CartController::class, 'destroy']);
+    });
+   
+
 });
+
+
+
+
+
+
 
 // Admin Profile
 Route::prefix('admin')->middleware('auth:api')->group(function () {
@@ -44,4 +65,7 @@ Route::prefix('admin')->middleware('auth:api')->group(function () {
         Route::put('/{product}', [ProductController::class, 'update']);
         Route::delete('/{product}', [ProductController::class, 'destroy']);
     });
+
+
+   
 });
