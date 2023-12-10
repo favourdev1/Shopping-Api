@@ -50,6 +50,10 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+
+
+   
+
         $credentials = [
             'email' => $request->email,
             'password' => $request->password,
@@ -68,7 +72,47 @@ class AuthController extends Controller
         } else {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Unauthorized',
+                'message' => 'Invalid username or password'
+            ], 401);
+        }
+    }
+
+
+
+
+    public function updatePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:6',
+            'confirm_password' => 'required|string|same:new_password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $user = Auth::user();
+
+        // Check if the current password matches the one in the database
+        if (Hash::check($request->current_password, $user->password)) {
+            // Update the password
+            $user->update([
+                'password' => bcrypt($request->new_password),
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password updated successfully',
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Current password is incorrect',
             ], 401);
         }
     }

@@ -9,18 +9,20 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 class CartController extends Controller
 {
-    public function index(User $user)
-    {
-        $cartItems =[];
-        $cartItems = $user->carts;
+  public function index()
+{
+    $user = Auth::user();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $cartItems,
-        ]);
-    }
+    $cartItems = $user->carts()->with('product')->get();
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $cartItems,
+    ]);
+}
 
     public function store(Request $request, User $user)
     {

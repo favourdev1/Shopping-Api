@@ -6,7 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ProductController extends Controller {
     public function index() {
         // Retrieve all products
@@ -18,13 +19,34 @@ class ProductController extends Controller {
         ] );
     }
 
-    public function show( Product $product ) {
-        // Retrieve a specific product
-        return response()->json( [
-            'status' => 'success',
-            'data' => $product,
-        ] );
+  
+
+    public function show($productId)
+    {
+        try {
+            // Find the product by ID
+            $product = Product::findOrFail($productId);
+    
+            return response()->json([
+                'status' => 'success',
+                'data' => $product,
+            ]);
+    
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found',
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
     }
+    
+    
 
     public function store( Request $request ) {
 
@@ -136,5 +158,45 @@ class ProductController extends Controller {
             ], 404);
         }
     }
+    
+
+// TODO fix bug with serarch method
+
+
+
+
+  
+
+
+public function search(Request $request)
+{
+    try {
+        $validator = Validator::make($request->all(), [
+            'query' => 'required|string|min:3',
+        ]);
+
+        $validator->validate();
+
+        $query = $request->input('query');
+
+        $results = Product::where('name', 'like', "%$query%")
+            ->orWhere('description', 'like', "%$query%")
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Search results retrieved successfully',
+            'data' => $results,
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation failed',
+            'errors' => $e->errors(),
+        ], 422);
+    }
+}
+
     
 }

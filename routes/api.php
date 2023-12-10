@@ -12,7 +12,13 @@ use App\Http\Controllers\CartController;
 // Access to Non Logged in Information
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
+    Route::get('/search', [ProductController::class, 'search']);
     Route::get('/{product}', [ProductController::class, 'show']);
+  
+});
+
+Route::get('/', function(){
+    return 'hello world ';
 });
 
 Route::post('/signup', [AuthController::class, 'register']);
@@ -28,7 +34,7 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::prefix('carts')->group(function () {
-        Route::get('/{user}', [CartController::class, 'index']);
+        Route::get('/', [CartController::class, 'index']);
         Route::post('/add/{user}', [CartController::class, 'store']);
         // Route::put('/update/{cart}', [CartController::class, 'update']);
         Route::delete('/delete/{cart}', [CartController::class, 'destroy']);
