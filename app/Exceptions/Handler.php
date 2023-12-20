@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Exceptions;
-
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -15,6 +15,21 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         //
     ];
+
+      /**
+     * Convert an authentication exception into an unauthenticated response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Auth\AuthenticationException  $exception
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        
+        return response()->json(['status'=>'error',
+        'error' => 'User is not Authenticated.'], 401);
+
+    }
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.

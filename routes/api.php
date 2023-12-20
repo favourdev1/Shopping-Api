@@ -9,6 +9,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 
 
+
+
+
+
 // Access to Non Logged in Information
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
@@ -50,19 +54,20 @@ Route::middleware('auth:api')->group(function () {
 
 
 // Admin Profile
-Route::prefix('admin')->middleware('auth:api')->group(function () {
+Route::prefix('admin')->middleware([ 'admin'])->group(function () {
     Route::get('/profile', [UsersController::class, 'GetAllUsers']);
     Route::put('/profile', [AdminController::class, 'updateProfile']);
-
-
+    Route::get('/profileDetails/{user}', [UsersController::class, 'showProfile']);
+    
+    
     // admin-users functionalities
     Route::prefix('users')->group(function () {
         Route::post('/{user}/makeadmin', [AdminController::class, 'setAsAdmin']);
         Route::post('/{user}/removeadmin', [AdminController::class, 'disableAdmin']);
     });
-
     
-
+    
+    
     // Admin -> product Functionalities
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index']);
@@ -71,7 +76,7 @@ Route::prefix('admin')->middleware('auth:api')->group(function () {
         Route::put('/{product}', [ProductController::class, 'update']);
         Route::delete('/{product}', [ProductController::class, 'destroy']);
     });
-
-
-   
+    
+    
+    
 });

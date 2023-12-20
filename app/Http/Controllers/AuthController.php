@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
+use Laravel\Passport\Token;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -60,6 +60,9 @@ class AuthController extends Controller
         ];
 
         if (Auth::attempt($credentials)) {
+           // Revoke old tokens for the authenticated user
+        Token::where('user_id', Auth::user()->id)->where('revoked', false)->update(['revoked' => true]);
+   
             $accessToken = Auth::user()->createToken('ShoppingApp')->accessToken;
 
             return response()->json([
@@ -67,6 +70,7 @@ class AuthController extends Controller
                 'message' => 'Login successful',
                 'data' => [
                     'token' => $accessToken,
+                    'userId'=>Auth::user()->id
                 ],
             ], 200);
         } else {
