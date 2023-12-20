@@ -44,6 +44,7 @@ class AuthController extends Controller
                 'lastname' => $user->lastname,
                 'email' => $user->email,
                 'token' => $token,
+                
             ],
         ], 200);
     }
@@ -70,7 +71,8 @@ class AuthController extends Controller
                 'message' => 'Login successful',
                 'data' => [
                     'token' => $accessToken,
-                    'userId'=>Auth::user()->id
+                    'userId'=>Auth::user()->id,
+                    'isAdmin'=>Auth::user()->is_admin
                 ],
             ], 200);
         } else {

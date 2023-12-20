@@ -21,10 +21,6 @@ Route::prefix('products')->group(function () {
   
 });
 
-Route::get('/', function(){
-    return 'hello world ';
-});
-
 Route::post('/signup', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -54,7 +50,7 @@ Route::middleware('auth:api')->group(function () {
 
 
 // Admin Profile
-Route::prefix('admin')->middleware([ 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:api','admin'])->group(function () {
     Route::get('/profile', [UsersController::class, 'GetAllUsers']);
     Route::put('/profile', [AdminController::class, 'updateProfile']);
     Route::get('/profileDetails/{user}', [UsersController::class, 'showProfile']);
