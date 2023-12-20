@@ -30,7 +30,6 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'api' => [
             'throttle:api',
-            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
