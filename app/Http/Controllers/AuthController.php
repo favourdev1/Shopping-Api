@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Token;
+use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -44,7 +46,7 @@ class AuthController extends Controller
                 'lastname' => $user->lastname,
                 'email' => $user->email,
                 'token' => $token,
-                
+
             ],
         ], 200);
     }
@@ -53,7 +55,7 @@ class AuthController extends Controller
     {
 
 
-   
+
 
         $credentials = [
             'email' => $request->email,
@@ -61,9 +63,9 @@ class AuthController extends Controller
         ];
 
         if (Auth::attempt($credentials)) {
-           // Revoke old tokens for the authenticated user
-        Token::where('user_id', Auth::user()->id)->where('revoked', false)->update(['revoked' => true]);
-   
+            // Revoke old tokens for the authenticated user
+            Token::where('user_id', Auth::user()->id)->where('revoked', false)->update(['revoked' => true]);
+
             $accessToken = Auth::user()->createToken('ShoppingApp')->accessToken;
 
             return response()->json([
@@ -71,8 +73,8 @@ class AuthController extends Controller
                 'message' => 'Login successful',
                 'data' => [
                     'token' => $accessToken,
-                    'userId'=>Auth::user()->id,
-                    'isAdmin'=>Auth::user()->is_admin
+                    'userId' => Auth::user()->id,
+                    'isAdmin' => Auth::user()->is_admin
                 ],
             ], 200);
         } else {
@@ -122,4 +124,20 @@ class AuthController extends Controller
             ], 401);
         }
     }
+
+    public function logout(Request $request)
+    {
+        // Revoke the access token for the authenticated user
+        $request->user()->token()->revoke();
+    
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User successfully logged out'
+        ], 200);
+    }
+
+  
+
+
+
 }
