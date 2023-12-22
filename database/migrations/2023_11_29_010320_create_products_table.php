@@ -12,20 +12,26 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('category');
+            $table->string('product_name');
+            $table->unsignedBigInteger('category_id');
             $table->text('description')->nullable();
-            $table->decimal('price', 8, 2);
+            $table->decimal('regular_price', 8, 2);
             $table->string('brand');
-            $table->string('image1')->nullable();
-            $table->string('image2')->nullable();
-            $table->string('image3')->nullable();
-            $table->string('image4')->nullable();
-            $table->string('image5')->nullable();
+            $table->string('product_img1')->nullable();
+            $table->string('product_img2')->nullable();
+            $table->string('product_img3')->nullable();
+            $table->string('product_img4')->nullable();
+            $table->string('product_img5')->nullable();
             $table->decimal('weight', 8, 2);
             $table->integer('quantity_in_stock');
             $table->text('tags')->nullable();
             $table->boolean('refundable');
+            $table->enum('status', ['active', 'disabled']);
+            $table->decimal('sales_price', 8, 2);
+            $table->string('meta_title');
+            $table->text('meta_description');
+            
+
             $table->timestamps();
         });
     }

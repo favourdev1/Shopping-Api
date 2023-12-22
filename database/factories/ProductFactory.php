@@ -14,20 +14,25 @@ class ProductFactory extends Factory
         $this->faker->locale('en_US'); // Set the locale to English
 
         return [
-            'name' => $this->faker->word,
-            'category' => $this->faker->word,
-            'description' => $this->faker->paragraph,
-            'price' => $this->faker->randomFloat(2, 10, 100),
-            'brand' => $this->faker->word,
-            'image1' => $this->faker->imageUrl(),
-            'image2' => $this->faker->imageUrl(),
-            'image3' => $this->faker->imageUrl(),
-            'image4' => $this->faker->imageUrl(),
-            'image5' => $this->faker->imageUrl(),
-            'weight' => $this->faker->randomFloat(2, 0.1, 10),
-            'quantity_in_stock' => $this->faker->numberBetween(1, 100),
+           "product_name" =>$this->faker->word,
+            // 'category_id' => \App\Models\Category::factory(),
+            'category_id'=>$this->faker->numberBetween(1,5),
+            'description' => $this->faker->sentence,
+            'regular_price' => $this->faker->randomFloat(2, 0, 1000),
+            'brand' => $this->faker->company,
+            'product_img1' => $this->faker->imageUrl(),
+            'product_img2' => $this->faker->imageUrl(),
+            'product_img3' => $this->faker->imageUrl(),
+            'product_img4' => $this->faker->imageUrl(),
+            'product_img5' => $this->faker->imageUrl(),
+            'weight' => $this->faker->randomFloat(2, 0, 100),
+            'quantity_in_stock' => $this->faker->numberBetween(0, 100),
             'tags' => $this->faker->words(3, true),
             'refundable' => $this->faker->boolean,
+            'status' => $this->faker->randomElement(['active', 'disabled']),
+            'sales_price' => $this->faker->randomFloat(2, 0, 1000),
+            'meta_title' => $this->faker->sentence,
+            'meta_description' => $this->faker->paragraph,
         ];
     }
 }
