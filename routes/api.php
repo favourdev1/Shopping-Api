@@ -14,6 +14,7 @@ use App\Http\Controllers\CategoryController;
 
 Route::post('/signup', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::middleware(['auth:api'])->get('/logout', [AuthController::class, 'logout']);
 
 
 
@@ -40,7 +41,7 @@ Route::middleware(['guest'])->group(function () {
 
 // Authenticated routes
 Route::middleware('auth:api')->group(function () {
-   // user routes
+    // user routes
     Route::prefix('profile')->group(function () {
         Route::get('/{user}', [UsersController::class, 'showProfile']);
         Route::put('/update', [UsersController::class, 'updateProfile']);
@@ -81,7 +82,7 @@ Route::middleware('auth:api')->group(function () {
             Route::put('/update/{category}', [CategoryController::class, 'update']);
             Route::post('/upload-image', [CategoryController::class, 'upload']);
             Route::delete('/delete/{category}', [CategoryController::class, 'destroy']);
-        
+
         });
 
         // Admin -> product Functionalities
@@ -96,5 +97,8 @@ Route::middleware('auth:api')->group(function () {
 
 
     });
+
+
+
 
 });
