@@ -67,31 +67,42 @@ class ProductController extends Controller
                 'description' => 'nullable|string',
                 'regular_price' => 'required|numeric|min:0',
                 'brand' => 'required|string|max:255',
-                'product_img1' => 'nullable|string',
-                'product_img2' => 'nullable|string',
-                'product_img3' => 'nullable|string',
-                'product_img4' => 'nullable|string',
-                'product_img5' => 'nullable|string',
-                'weight' => 'required|numeric|min:0',
+                'product_img1' => 'required|string',
+                'product_img2' => 'required|string',
+                'product_img3' => 'required|string',
+                'product_img4' => 'required|string',
+                'product_img5' => 'required|string',
+                'weight' => 'numeric|min:0',
                 'quantity_in_stock' => 'required|integer|min:0',
                 'tags' => 'nullable|string',
-                'refundable' => 'required|boolean',
-                'status' => 'required|in:active,disabled',
+                'refundable' => 'boolean',
+                'status' => 'required|in:active,inactive',
                 'sales_price' => 'required|numeric|min:0',
                 'meta_title' => 'required|string|max:255',
                 'meta_description' => 'required|string',
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
+                return response()->json([
+                    'status'=>'error',
+                    'message'=> implode(", ", $validator->errors()->all())
+                ],422);
+         
             }
 
             // Create a new product
             Product::create($request->all());
 
-            return redirect()->route('products.index')->with('success', 'Product created successfully');
+            return response()->json([
+                'status'=>'success',
+                'message'=>'Product added successfully'
+            ],200);
         } catch (QueryException $e) {
-            return redirect()->back()->with('error', 'Error creating product: ' . $e->getMessage())->withInput();
+            return response()->json([
+                'status'=>'error',
+                'message', 'Error creating product: ' . $e->getMessage()
+                ]
+            );
         }
     }
 
@@ -122,7 +133,12 @@ class ProductController extends Controller
             ]);
     
             if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
+               return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        
             }
     
             // Update the product
