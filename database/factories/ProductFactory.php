@@ -29,7 +29,7 @@ class ProductFactory extends Factory
             'quantity_in_stock' => $this->faker->numberBetween(0, 100),
             'tags' => $this->faker->words(3, true),
             'refundable' => $this->faker->boolean,
-            'status' => $this->faker->randomElement(['active', 'disabled']),
+            'status' => $this->faker->randomElement(['active', 'inactive']),
             'sales_price' => $this->faker->randomFloat(2, 0, 1000),
             'meta_title' => $this->faker->sentence,
             'meta_description' => $this->faker->paragraph,
