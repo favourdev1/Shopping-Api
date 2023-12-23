@@ -161,6 +161,41 @@ class ProductController extends Controller
     }
 
 
+    // for uploading image 
+    public function upload(Request $request)
+    {
+        try {
+            $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            if ($request->file('image')->isValid()) {
+                $image = $request->file('image');
+                $imageName = time() . '.' . $image->extension();
+                $image->move(public_path('product_img'), $imageName);
+
+                return response()->json([
+                    'data' => ['image_url' => url('product_img/' . $imageName)],
+                    'message' => 'Image uploaded successfully',
+                    'status' => 'success'
+                ], 200);
+            } else {
+                return response()->json([
+                    'data' => null,
+                    'message' => 'Invalid image file',
+                    'status' => 'error'
+                ], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'data' => null,
+                'message' => 'Error uploading image: ' . $e->getMessage(),
+                'status' => 'error'
+            ], 500);
+        }
+    }
+
+
     // TODO fix bug with serarch method
 
 
