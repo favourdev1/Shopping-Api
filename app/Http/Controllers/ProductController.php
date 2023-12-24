@@ -71,7 +71,7 @@ class ProductController extends Controller
                 'product_img2' => 'required|string',
                 'product_img3' => 'required|string',
                 'product_img4' => 'required|string',
-                'product_img5' => 'required|string',
+                'product_img5' => 'nullable|string',
                 'weight' => 'numeric|min:0',
                 'quantity_in_stock' => 'required|integer|min:0',
                 'tags' => 'nullable|string',
@@ -136,7 +136,7 @@ class ProductController extends Controller
                return response()->json([
                 'status' => 'error',
                 'message' => 'Validation failed',
-                'errors' => $validator->errors(),
+                'errors' => implode($validator->errors()->all()),
             ], 422);
         
             }
@@ -145,11 +145,22 @@ class ProductController extends Controller
             $product = Product::findOrFail($id);
             $product->update($request->all());
     
-            return redirect()->route('products.index')->with('success', 'Product updated successfully');
+            return response()->json([
+                'status'=>'success',
+                'message'=>'Product updated successfully'
+            ],200);
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('products.index')->with('error', 'Product not found');
+            return response()->json([
+                'status' => 'error',
+                'message' => 'product does not exist ',
+                'errors' => $e->getMessage(),
+            ], 404);
         } catch (QueryException $e) {
-            return redirect()->back()->with('error', 'Error updating product: ' . $e->getMessage())->withInput();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Error updating product ',
+                'errors' => $e->getMessage(),
+            ], 404);
         }
     }
     
@@ -168,7 +179,7 @@ class ProductController extends Controller
                 'message' => 'Product deleted successfully',
             ]);
 
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Product not found',
@@ -188,10 +199,10 @@ class ProductController extends Controller
             if ($request->file('image')->isValid()) {
                 $image = $request->file('image');
                 $imageName = time() . '.' . $image->extension();
-                $image->move(public_path('product_img'), $imageName);
+                $image->move(public_path('storage/product_img'), $imageName);
 
                 return response()->json([
-                    'data' => ['image_url' => url('product_img/' . $imageName)],
+                    'data' => ['image_url' => url('storage/product_img/' . $imageName)],
                     'message' => 'Image uploaded successfully',
                     'status' => 'success'
                 ], 200);
