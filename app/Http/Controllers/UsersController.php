@@ -15,7 +15,11 @@ class UsersController extends Controller
     public function GetAllUsers()
     {
         $user = auth()->user();
-        return response()->json(['user' => $user]);
+        return response()->json([
+            'status'=>'success',
+            'data' => ['users'=>$user],
+            
+        ]);
     }
 
     /**

@@ -24,12 +24,12 @@ Route::middleware(['guest'])->group(function () {
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index']);
         Route::get('/search', [ProductController::class, 'search']);
-        Route::get('/{product}', [ProductController::class, 'show']);
+        Route::get('/{productId}', [ProductController::class, 'show']);
 
     });
 
 
-    Route::prefix('categories')->group(function () {
+    Route::prefix('category')->group(function () {
         Route::get('/', [CategoryController::class, 'index']);
         Route::get('/{category}', [CategoryController::class, 'show']);
     });
@@ -86,7 +86,7 @@ Route::middleware('auth:api')->group(function () {
         });
 
         // Admin -> product Functionalities
-        Route::prefix('products')->group(function () {
+        Route::prefix('')->group(function () {
             Route::get('/', [ProductController::class, 'index']);
             Route::get('/{product}', [ProductController::class, 'show']);
             Route::post('/add', [ProductController::class, 'store']);

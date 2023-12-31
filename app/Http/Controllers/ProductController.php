@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use App\Models\Category;
-
+use Illuminate\Support\Facades\DB;
 
 
 class ProductController extends Controller
@@ -34,8 +34,20 @@ class ProductController extends Controller
     {
         try {
             // Find the product by ID
-            $product = Product::findOrFail($productId);
-
+                 // Find the product by ID
+                 $product = DB::table('products')
+                 ->join('categories', 'products.category_id', '=', 'categories.id')
+                 ->select('products.*', 'categories.category_name as category')
+                 ->where('products.id', $productId)
+                 ->first();
+             
+                 if(!$product){
+                    return response()->json([
+                        'status' => 'error',
+                        'data' => [],
+                    ]); 
+                 }
+        
             return response()->json([
                 'status' => 'success',
                 'data' => $product,
@@ -64,7 +76,7 @@ class ProductController extends Controller
             $validator = Validator::make($request->all(), [
                 'product_name' => 'required|string|max:255',
                 'category_id' => 'required|exists:categories,id',
-                'description' => 'nullable|string',
+                'description' => 'required|string',
                 'regular_price' => 'required|numeric|min:0',
                 'brand' => 'required|string|max:255',
                 'product_img1' => 'required|string',
@@ -117,16 +129,16 @@ class ProductController extends Controller
                 'description' => 'nullable|string',
                 'regular_price' => 'required|numeric|min:0',
                 'brand' => 'required|string|max:255',
-                'product_img1' => 'nullable|string',
-                'product_img2' => 'nullable|string',
-                'product_img3' => 'nullable|string',
-                'product_img4' => 'nullable|string',
+                'product_img1' => 'required|string',
+                'product_img2' => 'required|string',
+                'product_img3' => 'required|string',
+                'product_img4' => 'required|string',
                 'product_img5' => 'nullable|string',
-                'weight' => 'required|numeric|min:0',
+                'weight' => 'nullable|numeric|min:0',
                 'quantity_in_stock' => 'required|integer|min:0',
                 'tags' => 'nullable|string',
-                'refundable' => 'required|boolean',
-                'status' => 'required|in:active,disabled',
+                'refundable' => 'boolean',
+                'status' => 'required|in:active,inactive',
                 'sales_price' => 'required|numeric|min:0',
                 'meta_title' => 'required|string|max:255',
                 'meta_description' => 'required|string',
@@ -135,7 +147,7 @@ class ProductController extends Controller
             if ($validator->fails()) {
                return response()->json([
                 'status' => 'error',
-                'message' => 'Validation failed',
+                'message' => implode($validator->errors()->all()),
                 'errors' => implode($validator->errors()->all()),
             ], 422);
         
